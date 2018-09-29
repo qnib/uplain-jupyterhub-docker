@@ -1,0 +1,34 @@
+---
+version: 6.3.2-0
+name: jupyterhub
+description: "Simple jupyterhub stack"
+maintainers:
+- name: Christian Kniep
+  email: christian@qnib.org
+targets:
+  swarm: true
+  kubernetes: false
+---
+version: '3.6'
+services:
+  hub:
+    image: qnib/uplain-jupyterhub-docker:${image.tag}
+    ports:
+      - "8000:8000"
+    networks: ["jupyterhub-net"]
+    environment:
+      DOCKER_NETWORK_NAME: "jupyterhub_jupyterhub-net"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - jupyter-notebooks:/notebooks
+volumes:
+  jupyter-notebooks:
+    external: true
+networks:
+  jupyterhub-net:
+    driver: overlay
+    attachable: true
+
+---
+image:
+  tag: local
